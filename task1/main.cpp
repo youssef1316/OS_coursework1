@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/types.h>
 #include <limits.h>
 #include <dirent.h>
 #include <cstdlib>
@@ -10,8 +11,6 @@
 #include <filesystem>
 
 using namespace std;
-
-extern char **environ;
 
 int main()
 {
@@ -29,7 +28,7 @@ int main()
         // continue the loop if the input was empty
         if (command.empty())
             continue;
-        else if (command == "quit")
+        if (command == "quit")
             break;
 
         // create a stream of the command to be able to split it into words
@@ -40,13 +39,13 @@ int main()
         // loop to split the command by spaces
         while (ss >> word)
         {
-            // skiping the spaces
+            // skipping the spaces
             words.push_back(word);
         }
 
         if (words[0] == "cd")
         {
-            if (words[1] != "")
+            if (words.size() > 1)
             {
                 char *path = words[1].data();
                 if (chdir(path) != 0)
@@ -67,13 +66,13 @@ int main()
         {
             // point to the current directory
             DIR *dir = opendir(".");
-            struct dirent *entery;
+            struct dirent *entry;
             // read a file -> if valid -> print its name
-            while ((entery = readdir(dir)) != nullptr)
+            while ((entry = readdir(dir)) != nullptr)
             {
-                cout << entery->d_name << ' ';
+                cout << entry->d_name << ' ';
             }
-            // the .. is the prevoius directory and . is the current
+            // the .. is the previous directory and . is the current
             cout << "\n";
             // close the folder
             closedir(dir);
@@ -81,7 +80,7 @@ int main()
 
         else if (words[0] == "environ")
         {
-            if (words[1] == "") {
+            if (words.size() > 1) {
                 char *variable = words[1].data();
                 char *result = getenv(variable);
                 if (result != nullptr)
@@ -95,10 +94,10 @@ int main()
 
         else if (words[0] == "set")
         {
-            if (words[1] != "")
+            if (words.size() > 1)
             {
                 char *variable = words[1].data();
-                if (words[2] != "")
+                if (words.size() > 2)
                 {
                     char *value = words[2].data();
                     setenv(variable, value, 1);
@@ -121,33 +120,33 @@ int main()
 
         else if (words[0] == "help")
         {
-           if (words[1] != "") {
-            cout << "This is a terminal simualtion system that has support to few commands including:\n";
-            cout << "cd\n";
-            cout << "dir\n";
-            cout << "environ\n";
-            cout << "set\n";
-            cout << "echo\n";
-            cout << "help\n";
-            cout << "pause\n";
-            cout << "to know more about a command enter help and the command \n";
+           if (words.size() == 1) {
+            cout << "This is a terminal simulation system that has support to few commands including:\n"
+                 << "cd\n"
+                 << "dir\n"
+                 << "environ\n"
+                 << "set\n"
+                 << "echo\n"
+                 << "help\n"
+                 << "pause\n"
+                 << "to know more about a command enter help and the command \n";
            }
-            else if (words[1] == "cd")
+           else if (words[1] == "cd")
                 cout <<"The cd functions changes the current directory.\n"
                 << "to use it, enter cd followed by a space and the directory name you need to move to\n";
-            else if (words[1] == "dir")
+           else if (words[1] == "dir")
                 cout <<"The dir function shows the current items in the directory\n"
                 << "to use it, enter dir\n";
-            else if (words[1] == "environ")
+           else if (words[1] == "environ")
                 cout << "The environ function shows the environment variables \n"
                 << "to use it, enter environ followed by a space and then the variable you want to see\n";
-            else if (words[1] == "set")
+           else if (words[1] == "set")
                 cout <<"The set function allows the user to change an environment variable and create a new variable if does not exisit\n"
                 << "to use it, enter set followed by a space and then the variable\n";
-            else if (words[1] == "echo")
+           else if (words[1] == "echo")
                 cout <<"The echo function prints the string entered after it\n"
                 << "to use it, enter echo followed by the string you want to print\n";
-            else if (words[1] == "pause")
+           else if (words[1] == "pause")
                 cout << "The pause function pauses the shell until the enter key is pressed\n"
                 << "to use it, enter pause and to resume the shell press enter\n";
         }
@@ -156,8 +155,26 @@ int main()
             string buffer;
             getline(cin, buffer);
         }
-
-
+        else {
+            pid_t pid = fork();
+            if (pid < 0)
+                cout << "Fork Failed\n";
+            else if (pid == 0) {
+                vector<char*> args;
+                for (auto &s : words) args.push_back(s.data());
+                args.push_back(nullptr);
+                execvp(args[0], args.data());
+                perror("Error in executing command\n");
+                exit(1);
+            }
+            else {
+                int status;
+                //the waiting process
+                //the status to know how the process got terminated and can be null if we dont care about the process
+                //options to show how to wait either freeze or not
+                waitpid(pid, &status, 0);
+            }
+        }
     }
 
     return 0;
