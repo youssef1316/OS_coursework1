@@ -35,12 +35,18 @@ int main()
         stringstream ss(command);
         string word;
         vector<string> words;
+        bool backgroundRunning = false;
 
         // loop to split the command by spaces
         while (ss >> word)
         {
             // skipping the spaces
             words.push_back(word);
+        }
+        //check if there is & at the end
+        if (words.back() == "&") {
+            backgroundRunning = true;
+            words.pop_back();
         }
 
         if (words[0] == "cd")
@@ -168,11 +174,16 @@ int main()
                 exit(1);
             }
             else {
-                int status;
-                //the waiting process
-                //the status to know how the process got terminated and can be null if we dont care about the process
-                //options to show how to wait either freeze or not
-                waitpid(pid, &status, 0);
+               if (backgroundRunning) {
+                   cout << "The process is running in the background, pid: " << getpid() << "\n";
+               }
+                else {
+                    int status;
+                    //the waiting process
+                    //the status to know how the process got terminated and can be null if we dont care about the process
+                    //options to show how to wait either freeze or not
+                    waitpid(pid, &status, 0);
+                }
             }
         }
     }
