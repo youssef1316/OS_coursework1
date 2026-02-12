@@ -1,0 +1,10 @@
+1This is a terminal simulation system that has support to few commands including:
+cd
+dir
+environ
+set
+echo
+help
+pause
+to know more about a command enter help and the command 
+This file was created using the terminal and this line was printed with echo

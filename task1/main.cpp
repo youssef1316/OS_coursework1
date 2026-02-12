@@ -1,30 +1,91 @@
 #include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <fstream>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <dirent.h>
 #include <cstdlib>
 #include <cstring>
-#include <vector>
-#include <sstream>
-#include <filesystem>
+#include <cstdio>
 
 using namespace std;
 
-int main()
+bool inputFromFile(string inputFile, int &savedFd) {
+    savedFd = dup(STDIN_FILENO);
+    //open the file in read only mode
+    int fd = open(inputFile.c_str(), O_RDONLY);
+    if (fd < 0) {
+        perror("Input file error");
+        return false;
+    }
+    dup2(fd, STDIN_FILENO); // Replace Standard Input
+    close(fd);
+    return true;
+}
+bool printToFile(string outputFile, bool appendMode, int& saved_stdout) {
+    //write only | create
+    saved_stdout = dup(STDOUT_FILENO);
+    int flags = O_WRONLY | O_CREAT;
+
+    //if append or overwrite
+    if (appendMode) flags |= O_APPEND;
+    else flags |= O_TRUNC;
+
+    // 0644 gives read/write permission to owner, read to others
+    int fd = open(outputFile.c_str(), flags, 0644);
+    if (fd < 0) {
+        perror("Output file error");
+        return false;
+    }
+    dup2(fd, STDOUT_FILENO);
+    close(fd);
+    return true;
+}
+
+void restore(int savedFd, int originalFd) {
+    if (savedFd != -1) {
+        dup2(savedFd, originalFd);
+        close(savedFd);
+    }
+}
+
+
+int main(int argc, char* argv[])
 {
     string command;
-
+    //the default input mode is cin
+    istream *input_source = &cin;
+    ifstream file_stream;
+    int saved_stdin = -1;
+    int saved_stdout = -1;
+    //if there is a batch file provided switch to file
+    if (argc > 1) {
+        file_stream.open(argv[1]);
+        if (!file_stream.is_open()) {
+            cout << "Error: Could not open file " << argv[1] << endl;
+            return 1;
+        }
+        input_source = &file_stream;
+    }
     while (1)
     {
         // the current working directory
         char cwd[PATH_MAX];
         getcwd(cwd, sizeof(cwd));
-        // simulating an actual terminal
-        cout << cwd << " $ ";
-
-        getline(cin, command);
+        if (input_source == &cin) {
+            // simulating an actual terminal
+            cout << cwd << " $ ";
+        }
+        //if there is no more input left to read break the loop (for batch files)
+        //it also freezes the loop until input in the normal mode
+        if (!getline(*input_source, command)) {
+            break;
+        }
         // continue the loop if the input was empty
         if (command.empty())
             continue;
@@ -49,6 +110,47 @@ int main()
             words.pop_back();
         }
 
+        string inputFile;
+        string outputFile;
+        bool appendMode = false;
+        for (int i = 0; i < words.size(); i++)
+        {
+            if (words[i] == "<")
+            {
+                if (i + 1 < words.size()) {
+                    inputFile = words[i+1];
+                    // Remove "<" and "file"
+                    words.erase(words.begin() + i, words.begin() + i + 2);
+                    //update the index since elements are removed
+                    i--;
+                } else {
+                    cout << "Error: No input file specified.\n";
+                }
+            }
+            else if (words[i] == ">")
+            {
+                if (i + 1 < words.size()) {
+                    outputFile = words[i+1];
+                    appendMode = false;
+                    words.erase(words.begin() + i, words.begin() + i + 2);
+                    i--;
+                } else {
+                    cout << "Error: No output file specified.\n";
+                }
+            }
+            else if (words[i] == ">>")
+            {
+                if (i + 1 < words.size()) {
+                    outputFile = words[i+1];
+                    appendMode = true;
+                    words.erase(words.begin() + i, words.begin() + i + 2);
+                    i--;
+                } else {
+                    cerr << "Error: No output file specified.\n";
+                }
+            }
+        }
+
         if (words[0] == "cd")
         {
             if (words.size() > 1)
@@ -70,6 +172,9 @@ int main()
 
         else if (words[0] == "dir")
         {
+            if (!outputFile.empty()) {
+                cout << printToFile(outputFile, appendMode, saved_stdout);
+            }
             // point to the current directory
             DIR *dir = opendir(".");
             struct dirent *entry;
@@ -82,6 +187,8 @@ int main()
             cout << "\n";
             // close the folder
             closedir(dir);
+            cout.flush();
+            restore(saved_stdout, STDOUT_FILENO);
         }
 
         else if (words[0] == "environ")
@@ -100,6 +207,13 @@ int main()
 
         else if (words[0] == "set")
         {
+            if (!inputFile.empty()) {
+                cout << inputFromFile(inputFile, saved_stdin);
+            }
+            if (!outputFile.empty()) {
+                cout << printToFile(outputFile, appendMode, saved_stdout);
+            }
+
             if (words.size() > 1)
             {
                 char *variable = words[1].data();
@@ -114,18 +228,38 @@ int main()
             }
             else
                 cout << "Error missing command must be set variable value\n";
+
+            cout.flush();
+            restore(saved_stdin, STDIN_FILENO);
+            restore(saved_stdout, STDOUT_FILENO);
         }
 
         else if (words[0] == "echo")
         {
+            if (!inputFile.empty()) {
+                if (!inputFromFile(inputFile, saved_stdin)) continue; // Skip if failed
+            }
+            if (!outputFile.empty()) {
+                if (!printToFile(outputFile, appendMode, saved_stdout)) continue;
+            }
             for (int i = 1; i < words.size(); i++) {
                 cout << words[i] << " " ;
             }
             cout << "\n";
+            cout.flush();
+            restore(saved_stdin, STDIN_FILENO);
+            restore(saved_stdout, STDOUT_FILENO);
         }
 
         else if (words[0] == "help")
         {
+            if (!inputFile.empty()) {
+                cout << inputFromFile(inputFile, saved_stdin);
+            }
+            if (!outputFile.empty()) {
+                cout << printToFile(outputFile, appendMode, saved_stdout);
+            }
+
            if (words.size() == 1) {
             cout << "This is a terminal simulation system that has support to few commands including:\n"
                  << "cd\n"
@@ -155,6 +289,9 @@ int main()
            else if (words[1] == "pause")
                 cout << "The pause function pauses the shell until the enter key is pressed\n"
                 << "to use it, enter pause and to resume the shell press enter\n";
+            cout.flush();
+            restore(saved_stdin, STDIN_FILENO);
+            restore(saved_stdout, STDOUT_FILENO);
         }
         else if (words[0] == "pause") {
             cout << "Shell is paused press enter to resume";
@@ -169,21 +306,30 @@ int main()
                 vector<char*> args;
                 for (auto &s : words) args.push_back(s.data());
                 args.push_back(nullptr);
+                if (!inputFile.empty()) {
+                    cout << inputFromFile(inputFile, saved_stdin);
+                }
+                if (!outputFile.empty()) {
+                    cout << printToFile(outputFile, appendMode, saved_stdout);
+                }
                 execvp(args[0], args.data());
                 perror("Error in executing command\n");
+                cout.flush();
+                restore(saved_stdin, STDIN_FILENO);
+                restore(saved_stdout, STDOUT_FILENO);
                 exit(1);
             }
             else {
                if (backgroundRunning) {
-                   cout << "The process is running in the background, pid: " << getpid() << "\n";
+                   cout << "The process is running in the background, pid: " << pid << "\n";
                }
-                else {
+               else {
                     int status;
                     //the waiting process
                     //the status to know how the process got terminated and can be null if we dont care about the process
                     //options to show how to wait either freeze or not
                     waitpid(pid, &status, 0);
-                }
+               }
             }
         }
     }
