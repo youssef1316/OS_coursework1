@@ -1,4 +1,6 @@
+cd ..
+cd task1
 dir
-environ USER
-environ user
+echo env data test
+environ >> env.txt &
 help
