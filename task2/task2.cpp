@@ -49,6 +49,12 @@ void *count(void *arg) {
             local_count[word]++;
         }
     }
+    cout << "***The Local count***\n";
+    for (auto const& [word, count] : local_count) {
+        //local count for each thread
+        cout << word << ": " << count << "\n";
+    }
+    cout << "\n";
     //critical segment
     pthread_mutex_lock(&mtx);
     for (auto const &[word, count]: local_count) {
@@ -101,6 +107,7 @@ int main(int argc, char *argv[]) {
         }
 
         // Print final results
+        cout << "***GLobal count***\n";
         for (auto const& [word, count] : global_counts) {
             cout << word << ": " << count << "\n";
         }
