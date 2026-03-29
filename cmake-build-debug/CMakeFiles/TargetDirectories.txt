@@ -1,7 +1,8 @@
-/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1/cmake-build-debug/CMakeFiles/task1.dir
-/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1/cmake-build-debug/CMakeFiles/task2.dir
-/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1/cmake-build-debug/CMakeFiles/task3.dir
-/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1/cmake-build-debug/CMakeFiles/task4.dir
-/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1/cmake-build-debug/CMakeFiles/task5.dir
-/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/Youssef.Mahmoud/Desktop/operatingsystems/cmake-build-debug/CMakeFiles/task1.dir
+/mnt/c/Users/Youssef.Mahmoud/Desktop/operatingsystems/cmake-build-debug/CMakeFiles/task2.dir
+/mnt/c/Users/Youssef.Mahmoud/Desktop/operatingsystems/cmake-build-debug/CMakeFiles/task3.dir
+/mnt/c/Users/Youssef.Mahmoud/Desktop/operatingsystems/cmake-build-debug/CMakeFiles/task4.dir
+/mnt/c/Users/Youssef.Mahmoud/Desktop/operatingsystems/cmake-build-debug/CMakeFiles/task5.dir
+/mnt/c/Users/Youssef.Mahmoud/Desktop/operatingsystems/cmake-build-debug/CMakeFiles/task6.dir
+/mnt/c/Users/Youssef.Mahmoud/Desktop/operatingsystems/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Users/Youssef.Mahmoud/Desktop/operatingsystems/cmake-build-debug/CMakeFiles/rebuild_cache.dir

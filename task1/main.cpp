@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
                     //a pointer to the data inside the current directory
                     dirent *entry;
                     while ((entry = readdir(dir)) != nullptr) {
-                        cout << entry->d_name << " ";
+                        cout << entry -> d_name << " ";
                     }
                     cout << endl;
                     closedir(dir);
@@ -280,7 +280,8 @@ int main(int argc, char *argv[]) {
                 } else {
                     int status;
                     //the waiting process
-                    //the status to know how the process got terminated and can be null if we dont care about the process
+                    //the status to know how the process got terminated
+                    //and can be null if we dont care about the process
                     //options to show how to wait either freeze or not
                     waitpid(pid, &status, 0);
                 }
