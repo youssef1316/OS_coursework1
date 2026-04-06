@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/mnt/c/Users/Youssef.Mahmoud/Desktop/operatingsystems/task4/task4.cpp" "CMakeFiles/task4.dir/task4/task4.cpp.o" "gcc" "CMakeFiles/task4.dir/task4/task4.cpp.o.d"
+  "/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1/task4/task4.cpp" "CMakeFiles/task4.dir/task4/task4.cpp.o" "gcc" "CMakeFiles/task4.dir/task4/task4.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -1,0 +1,114 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "OS_coursework1",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "task1::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-task1-Debug-6e22fb4cf5c71bd4e4d7.json",
+					"name" : "task1",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "task2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-task2-Debug-4bfc503707764b219708.json",
+					"name" : "task2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "task3::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-task3-Debug-6c72ac8aa431270bee3c.json",
+					"name" : "task3",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "task4::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-task4-Debug-d2340dd7e22e83d6ef45.json",
+					"name" : "task4",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "task5::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-task5-Debug-a16c6cfaa4650341d54e.json",
+					"name" : "task5",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "task6::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-task6-Debug-5e8487cb4d382786b69a.json",
+					"name" : "task6",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "task7::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-task7-Debug-70d648647e1515f27d3c.json",
+					"name" : "task7",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1/cmake-build-debug",
+		"source" : "/Users/youssefmahmoud/Desktop/uni/lv5s2/OS_coursework1"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
